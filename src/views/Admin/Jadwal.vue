@@ -1,4 +1,5 @@
 <template>
+  <!-- menampilkan data table berisi array dari prop yaitu izins -->
   <v-data-table
     :headers="headers"
     :items="jadwals"
@@ -9,7 +10,7 @@
       <v-toolbar
         flat
       >
-        <v-toolbar-title>My CRUD</v-toolbar-title>
+        <v-toolbar-title><strong>Data Jadwal</strong></v-toolbar-title>
         <v-divider
           class="mx-4"
           inset
@@ -20,6 +21,8 @@
           v-model="dialog"
           max-width="500px"
         >
+          <!-- dialog yang memunculkan form untuk penambahan data booking -->
+          <!-- Tambah data Booking melalui button -->
           <template v-slot:activator="{ on, attrs }">
             <v-btn
               color="primary"
@@ -28,7 +31,7 @@
               v-bind="attrs"
               v-on="on"
             >
-              New Item
+              New Item 
             </v-btn>
           </template>
           <v-card>
@@ -68,10 +71,6 @@
                     sm="6"
                     md="6"
                   >
-                    <!-- <v-text-field
-                      v-model="editedItem.tanggal"
-                      label="Tanggal"
-                    ></v-text-field> -->
                     <v-menu
                         ref="menu"
                         v-model="menu"
@@ -156,6 +155,53 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
+
+        <v-dialog
+          v-model="dialogInstruktur"
+          max-width="500px"
+        >
+          <v-card>
+            <v-card-title>
+              <span class="text-h5">Ganti Instruktur</span>
+            </v-card-title>
+
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="6"
+                  >
+                    <v-text-field
+                      v-model="editedItem.instruktur"
+                      label="Instruktur"
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                color="blue darken-1"
+                text
+                @click="close"
+              >
+                Cancel
+              </v-btn>
+              <v-btn
+                color="blue darken-1"
+                text
+                @click="saveInstruktur"
+              >
+                Save
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
         <v-dialog v-model="dialogDelete" max-width="500px">
           <v-card>
             <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
@@ -183,23 +229,32 @@
       >
         mdi-delete
       </v-icon>
-    </template>
-    <template v-slot:no-data>
-      <v-btn
-        color="primary"
-        @click="initialize"
-      >
-        Reset
-      </v-btn>
+      <div v-if="item.tipe == 'gym'">
+        <v-btn small color="primary" class="mr-2"  disabled @click="">Ganti Instruktur</v-btn>
+      </div>
+      <div v-else>  
+        <v-btn small color="primary" class="mr-2" dark @click="editItemInstruktur(item)">Ganti Instruktur</v-btn>
+      </div>
+      <v-snackbar
+      v-model="snackbar"
+    >
+      {{ error_message }}
+    </v-snackbar>
     </template>
   </v-data-table>
 </template>
 
+
 <script>
   export default {
+    //define seluruh prop data yang akan digunakan sebagai penampung dari response konsum API ataupun 
+    //yang akan digunakan didalam template
     data: () => ({
       dialog: false,
       dialogDelete: false,
+      dialogInstruktur: false,
+      snackbar: false,
+      error_message: '',
       value: '',
       headers: [
         { text: 'JadwalID', value: 'jadwalID', align: 'start',
@@ -219,11 +274,13 @@
         tipe: '',
         sesi: '',
         tanggal: null,
+        instruktur: '',
       },
       defaultItem: {
         tipe: '',
         sesi: '',
         tanggal: null,
+        instruktur: '',
       },
       tipeFit: [{id:1, name:'kelas'},{id:2, name:'gym'}]
     }),
@@ -244,52 +301,11 @@
     },
 
     created () {
-      this.initialize();
       this.readData();
     },
 
     methods: {
-      initialize () {
-        // this.jadwals = [
-        //   {
-        //     jadwalID: 1,
-        //     pegawaiID: 1,
-        //     tipe: 'Asolole',
-        //     sesi: '2',
-        //     tanggal: '2023-08-05',
-        //     instruktur: 'Yogi',
-        //     kapasitas: 9,
-        //   },
-        //   {
-        //     jadwalID: 2,
-        //     pegawaiID: 1,
-        //     tipe: 'Asolole',
-        //     sesi: '2',
-        //     tanggal: '2023-08-05',
-        //     instruktur: 'Yogi',
-        //     kapasitas: 9,
-        //   },
-        //   {
-        //     jadwalID: 3,
-        //     pegawaiID: 1,
-        //     tipe: 'Asolole',
-        //     sesi: '2',
-        //     tanggal: '2023-08-05',
-        //     instruktur: 'Yogi',
-        //     kapasitas: 9,
-        //   },
-        //   {
-        //     jadwalID: 4,
-        //     pegawaiID: 1,
-        //     tipe: 'Asolole',
-        //     sesi: '2',
-        //     tanggal: '2023-08-05',
-        //     instruktur: 'Yogi',
-        //     kapasitas: 9,
-        //   },
-        // ]
-      },
-
+       //membaca data lewat konsum API dan menampungnya dalam array izins
       readData() {
         var url = this.$api + '/jadwal';
         this.$http.get(url, {
@@ -301,31 +317,65 @@
         })
       },
 
+      //menampung data yang dipilih dalam tabel pada variabel editedItem. Menampung indeks data pada variabel editedIndex
+      //memunculkan form edit data untuk melakukan editing data jadwal
       editItem (item) {
-        this.editedIndex = this.jadwals.indexOf(item)
+        this.editedIndex = item.jadwalID
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
 
+      //menampung data yang dipilih dalam tabel pada variabel editedItem. Menampung indeks data pada variabel editedIndex
+      //memunculkan form edit instruktur untuk melakukan edit instruktur
+      editItemInstruktur(item){
+        this.editedIndex = item.jadwalID
+        this.editedItem = Object.assign({}, item)
+        this.dialogInstruktur = true
+      },
+
+      //menampung data yang dipilih dalam tabel pada variabel editedItem. Menampung indeks data pada variabel editedIndex
+      //memunculkan form edit hapus untuk melakukan penghapusan data
       deleteItem (item) {
-        this.editedIndex = this.jadwals.indexOf(item)
+        this.editedIndex = item.jadwalID
         this.editedItem = Object.assign({}, item)
         this.dialogDelete = true
       },
 
+      //melakukan penghapusan data yang dipilih dengan konsum API
       deleteItemConfirm () {
-        this.jadwals.splice(this.editedIndex, 1)
+          console.log(this.editedIndex)
+          var url = this.$api + '/jadwal/' + this.editedIndex;
+          this.load = true;
+          this.$http.delete(url, {
+              headers: {
+                  'Authorization' : 'Bearer ' + localStorage.getItem('token')
+              }
+          }).then(response => {
+              this.error_message = response.data.message;
+              this.color = "green";
+              this.snackbar = true;
+              this.readData(); // baca data
+            }).catch(error => {
+              this.error_message = error.response.data.message;
+              this.color = "red";
+              this.snackbar = true;
+          });
         this.closeDelete()
       },
 
+      //menutup semua form dan membuat nilai editedIndex atau editedItem menjadi kosong kembali
+      //agar dapat digunakan pada data yang akan dipilih selanjutnya
       close () {
         this.dialog = false
+        this.dialogInstruktur = false
         this.$nextTick(() => {
           this.editedItem = Object.assign({}, this.defaultItem)
           this.editedIndex = -1
         })
       },
 
+      //menutup form delete dan membuat nilai editedIndex atau editedItem menjadi kosong kembali
+      //agar dapat digunakan pada data yang akan dipilih selanjutnya
       closeDelete () {
         this.dialogDelete = false
         this.$nextTick(() => {
@@ -334,11 +384,55 @@
         })
       },
 
+      //menyimpan data instruktur sesuai dengan pilihan data yang akan diganti instrukturnya
+      //cuman bisa dilakukan jika tipe adalah kelas
+      saveInstruktur(){
+        var url = this.$api + '/updateInstruktur/' + this.editedIndex;
+            this.load = true;
+            
+            this.$http.put(url, this.editedItem, {
+            headers: {
+                'Authorization' : 'Bearer ' + localStorage.getItem('token')
+            }
+            }).then(response => {
+                this.error_message = response.data.message;
+                this.color = "green";
+                this.snackbar = true;
+                this.readData();
+                
+            }).catch(error => {
+                this.error_message = error.response.data.message;
+                this.color = "red";
+            });
+            this.close()
+      },
+
       save () {
+        //melakukan edit data yang dipilih, jika editedIndex lebih dari satu maka ada data yang dipilih
+        //pastikan jika merubah gym ke kelas tambahkan data instruktur
         if (this.editedIndex > -1) {
-          Object.assign(this.jadwals[this.editedIndex], this.editedItem)
+            this.editedItem.tipe = this.value
+            var url = this.$api + '/jadwal/' + this.editedIndex;
+            this.load = true;
+            
+            this.$http.put(url, this.editedItem, {
+            headers: {
+                'Authorization' : 'Bearer ' + localStorage.getItem('token')
+            }
+            }).then(response => {
+                this.error_message = response.data.message;
+                this.color = "green";
+                this.snackbar = true;
+                this.readData();
+            }).catch(error => {
+                this.error_message = error.response.data.message;
+                this.color = "red";
+            });
         } else {
-          var indeks = this.editedIndex + 1;
+          //melakukan penambahan data sesuai dengan inputan user
+          //pastikan sudah create role 1 untuk Instruktur
+          //pastikan sudah create pegawai minimal 2 nama bebas
+          //akan ada dropdown untuk tipe dan cuman 2 yaitu 'kelas' dan 'gym'
             var url = this.$api + '/jadwal';
             this.load = true;
             this.editedItem.tipe = this.value
@@ -355,7 +449,6 @@
                 this.error_message = error.response.data.message;
                 this.color = "red";
             });
-            this.close();
         }
         this.close()
       },
