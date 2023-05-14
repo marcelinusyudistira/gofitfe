@@ -140,26 +140,6 @@
                         </v-date-picker>
                     </v-menu>
                   </v-col>
-                  <!-- Terdapat kondisi untuk menampilkan input infrasturktur bila tipenya kelas -->
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="6"
-                  >
-                    <div v-if = "value == 'kelas'">
-                        <v-text-field
-                        v-model="editedItem.instruktur"
-                        label="Instruktur"
-                        ></v-text-field>
-                    </div>
-                        <div v-if = "value == 'gym'">
-                        <v-text-field
-                        v-model="editedItem.instruktur"
-                        label="Instruktur"
-                        disabled
-                        ></v-text-field>
-                    </div>
-                  </v-col>
                 </v-row>
               </v-container>
             </v-card-text>

@@ -115,7 +115,7 @@
                         </v-date-picker>
                     </v-menu>
                   </v-col>
-                  <!-- terdapat kondisi dimana -->
+                  <!-- Terdapat kondisi untuk menampilkan input infrasturktur bila tipenya kelas -->
                   <v-col
                     cols="12"
                     sm="6"
@@ -159,6 +159,7 @@
           </v-card>
         </v-dialog>
 
+        <!-- dialog untuk mengubah instruktur dengan menampilkan form edit instruktur -->
         <v-dialog
           v-model="dialogInstruktur"
           max-width="500px"
@@ -205,6 +206,7 @@
           </v-card>
         </v-dialog>
 
+        <!-- dialog untuk menampilkan form delete -->
         <v-dialog v-model="dialogDelete" max-width="500px">
           <v-card>
             <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
@@ -217,6 +219,7 @@
           </v-card>
         </v-dialog>
       </v-toolbar>
+      
     </template>
     <template v-slot:item.actions="{ item }">
       <v-icon
@@ -232,17 +235,20 @@
       >
         mdi-delete
       </v-icon>
+      <!-- terdapat kondisi jika tipe dari data yang dipilih adalah kelas maka dapat mengganti instruktur -->
       <div v-if="item.tipe == 'gym'">
         <v-btn small color="primary" class="mr-2"  disabled @click="">Ganti Instruktur</v-btn>
       </div>
       <div v-else>  
         <v-btn small color="primary" class="mr-2" dark @click="editItemInstruktur(item)">Ganti Instruktur</v-btn>
       </div>
+
+      <!-- notifikasi -->
       <v-snackbar
-      v-model="snackbar"
-    >
-      {{ error_message }}
-    </v-snackbar>
+        v-model="snackbar"
+      >
+        {{ error_message }}
+      </v-snackbar>
     </template>
   </v-data-table>
 </template>
@@ -434,7 +440,7 @@
         } else {
           //melakukan penambahan data sesuai dengan inputan user
           //pastikan sudah create role 1 untuk Instruktur
-          //pastikan sudah create pegawai minimal 2 nama bebas
+          //pastikan sudah create pegawai minimal 2 nama bebas dan mempunyai namaRole Instruktur serta roleID 1
           //akan ada dropdown untuk tipe dan cuman 2 yaitu 'kelas' dan 'gym'
             var url = this.$api + '/jadwal';
             this.load = true;
