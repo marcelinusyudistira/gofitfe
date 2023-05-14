@@ -1,5 +1,5 @@
 <template>
-  <!-- menampilkan data table berisi array dari prop yaitu izins -->
+  <!-- menampilkan data table berisi array dari prop yaitu jadwals -->
   <v-data-table
     :headers="headers"
     :items="jadwals"
@@ -17,12 +17,12 @@
           vertical
         ></v-divider>
         <v-spacer></v-spacer>
+        <!-- dialog yang memunculkan form untuk penambahan data booking -->
         <v-dialog
           v-model="dialog"
           max-width="500px"
         >
-          <!-- dialog yang memunculkan form untuk penambahan data booking -->
-          <!-- Tambah data Booking melalui button -->
+          <!-- Tambah data jadwal melalui button -->
           <template v-slot:activator="{ on, attrs }">
             <v-btn
               color="primary"
@@ -42,6 +42,7 @@
             <v-card-text>
               <v-container>
                 <v-row>
+                  <!-- menampilkan dropdown dengan isi nama instruktur sehingga user tinggal pilih -->
                   <v-col
                     cols="12"
                     sm="6"
@@ -66,6 +67,7 @@
                       label="Sesi"
                     ></v-text-field>
                   </v-col>
+                  <!-- Menggunakan datapicker dari vuetify untuk mengambil nilai date yang ditentukan user -->
                   <v-col
                     cols="12"
                     sm="6"
@@ -113,24 +115,25 @@
                         </v-date-picker>
                     </v-menu>
                   </v-col>
+                  <!-- terdapat kondisi dimana -->
                   <v-col
                     cols="12"
                     sm="6"
                     md="6"
                   >
-                  <div v-if = "value == 'kelas'">
-                    <v-text-field
-                      v-model="editedItem.instruktur"
-                      label="Instruktur"
-                    ></v-text-field>
-                  </div>
+                    <div v-if = "value == 'kelas'">
+                      <v-text-field
+                        v-model="editedItem.instruktur"
+                        label="Instruktur"
+                      ></v-text-field>
+                    </div>
                     <div v-if = "value == 'gym'">
-                    <v-text-field
-                      v-model="editedItem.instruktur"
-                      label="Instruktur"
-                      disabled
-                    ></v-text-field>
-                  </div>
+                      <v-text-field
+                        v-model="editedItem.instruktur"
+                        label="Instruktur"
+                        disabled
+                      ></v-text-field>
+                    </div>
                   </v-col>
                 </v-row>
               </v-container>

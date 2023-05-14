@@ -1,4 +1,5 @@
 <template>
+  <!-- menampilkan data table berisi array dari prop yaitu izins -->
   <v-data-table
     :headers="headers"
     :items="izins"
@@ -17,6 +18,7 @@
         ></v-divider>
         <v-spacer></v-spacer>
         
+        <!-- dialog untuk menampilkan form delete -->
         <v-dialog v-model="dialogDelete" max-width="500px">
           <v-card>
             <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
@@ -31,19 +33,7 @@
       </v-toolbar>
     </template>
     <template v-slot:[`item.actions`]="{ item }">
-      <!-- <v-icon
-        small
-        class="mr-2"
-        @click="editItem(item)"
-      >
-        mdi-pencil
-      </v-icon>
-      <v-icon
-        small
-        @click="deleteItem(item)"
-      >
-        mdi-delete
-      </v-icon> -->
+      <!-- dialog untuk menampilkan form verifikasi data -->
       <v-dialog
           v-model="dialog"
           max-width="500px"
@@ -93,6 +83,7 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
+        <!-- terdapat kondisi jika izin bernilai 1 atau diperbolehkan maka muncul kalimat Sudah Terkonfirmasi -->
       <div v-if=item.is_accepted>  
         <v-btn small color="primary" class="mr-2"  disabled elevation="2" @click="">Sudah Terkonfirmasi</v-btn>
       </div>
@@ -111,22 +102,14 @@
 
 <script>
   export default {
+    //define seluruh prop data yang akan digunakan sebagai penampung dari response konsum API ataupun 
+    //yang akan digunakan didalam template
     data: () => ({
       dialog: false,
       dialogDelete: false,
       error_message: '',
       snackbar: false,
       value: null,
-      pilihan : [
-        {
-          id: 1, nilai: 'Yogi'
-        },
-        {
-          id: 2, nilai: 'Hana'
-        },
-        {
-          id: 3, nilai: 'Putra'
-        }],
       headers: [
         { text: 'ID Jadwal', value: 'jadwalID', align: 'start',  sortable: false,},
         { text: 'Nama Instrukur', value: 'instruktur' },
@@ -156,10 +139,6 @@
       },
     }),
 
-    computed: {
-      
-    },
-
     watch: {
       dialog (val) {
         val || this.close()
@@ -169,12 +148,14 @@
       },
     },
 
+    //loop agar data terus dibaca dan ditarik dari database melalui konsum API
     created () {
       this.readData();
       this.readPegawai();
     },
 
     methods: {
+      //membaca data lewat konsum API dan menampungnya dalam array izins
       readData() {
         var url = this.$api + '/izin';
         this.$http.get(url, {
@@ -186,6 +167,8 @@
         })
       },
 
+      //memanggil data seluruh instruktur dan menampungnya dalam array dataInstruktur
+      //akan digunakan dalam dropdown select pada form verifikasi
       readPegawai() {
         var url = this.$api + '/showInstruktur';
         this.$http.get(url, {
@@ -197,12 +180,11 @@
         })
       },
 
+      //memverifikasi izin dari instruktur dan melakukan penggantian instruktur pada jadwal yang sudah ditentukan
       verifIzin(item) {
         this.editedIndex = this.izins.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.editedItem.penggantiInstruktur = this.value
-        // this.error_message = this.editedIndex
-        // this.snackbar = true;
 
         var indeks = this.editedIndex + 1;
         var url = this.$api + '/verifIzin/' + this.editedItem.instruktur;
@@ -222,46 +204,22 @@
           });
       },
 
+      //menampung data yang dipilih dalam tabel pada variabel editedItem. Menampung indeks data pada variabel editedIndex
+      //memunculkan form verifikasi
       editItem (item) {
         this.editedIndex = this.izins.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
 
-      deleteItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialogDelete = true
-      },
-
-      deleteItemConfirm () {
-        this.desserts.splice(this.editedIndex, 1)
-        this.closeDelete()
-      },
-
+      //menutup semua form dan membuat nilai editedIndex atau editedItem menjadi kosong kembali
+      //agar dapat digunakan pada data yang akan dipilih selanjutnya
       close () {
         this.dialog = false
         this.$nextTick(() => {
           this.editedItem = Object.assign({}, this.defaultItem)
           this.editedIndex = -1
         })
-      },
-
-      closeDelete () {
-        this.dialogDelete = false
-        this.$nextTick(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        })
-      },
-
-      save () {
-        if (this.editedIndex > -1) {
-          Object.assign(this.desserts[this.editedIndex], this.editedItem)
-        } else {
-          this.desserts.push(this.editedItem)
-        }
-        this.close()
       },
     },
   }
