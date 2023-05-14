@@ -48,7 +48,7 @@ const routes = [
         // route level code-splitting
         // this generates a separate chunk (about.[hash].js) for this route
         // which is lazy-loaded when the route is visited.
-        component: () => import(/* webpackChunkName: "about" */ '../views/Admin/Perizinan.vue')
+        component: () => import(/* webpackChunkName: "about" */ '../views/Admin/Jadwal.vue')
       },
       {
         path: '/booking',
@@ -57,7 +57,7 @@ const routes = [
         // route level code-splitting
         // this generates a separate chunk (about.[hash].js) for this route
         // which is lazy-loaded when the route is visited.
-        component: () => import(/* webpackChunkName: "about" */ '../views/Admin/Perizinan.vue')
+        component: () => import(/* webpackChunkName: "about" */ '../views/Admin/Booking.vue')
       }
     ]
   }
