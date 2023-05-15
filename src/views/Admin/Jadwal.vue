@@ -222,7 +222,12 @@
       
     </template>
     <template v-slot:item.actions="{ item }">
-      <v-icon
+      <v-btn small color="primary" class="mr-2 mt-1" @click="editItem(item)">Edit Jadwal</v-btn>
+      <v-col style="margin-top: -6px; margin-bottom: -10px; padding: 10px 0px 10px 0px;">
+      <v-btn small color="primary"  @click="deleteItem(item)">Hapus Jadwal</v-btn>
+      </v-col>
+      
+      <!-- <v-icon
         small
         class="mr-2"
         @click="editItem(item)"
@@ -234,13 +239,13 @@
         @click="deleteItem(item)"
       >
         mdi-delete
-      </v-icon>
+      </v-icon> -->
       <!-- terdapat kondisi jika tipe dari data yang dipilih adalah kelas maka dapat mengganti instruktur -->
       <div v-if="item.tipe == 'gym'">
-        <v-btn small color="primary" class="mr-2"  disabled @click="">Ganti Instruktur</v-btn>
+        <v-btn small color="primary" class="mr-2 mt-1"  disabled @click="">Ganti Instruktur</v-btn>
       </div>
       <div v-else>  
-        <v-btn small color="primary" class="mr-2" dark @click="editItemInstruktur(item)">Ganti Instruktur</v-btn>
+        <v-btn small color="primary" class="mr-2 mt-1 mb-1" dark @click="editItemInstruktur(item)">Ganti Instruktur</v-btn>
       </div>
 
       <!-- notifikasi -->

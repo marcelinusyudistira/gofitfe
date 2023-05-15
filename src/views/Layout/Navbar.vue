@@ -69,6 +69,8 @@
           { title: 'Perizinan', icon: 'mdi-bullhorn-outline', to: 'perizinan' },
           { title: 'Jadwal', icon: 'mdi-account-group', to: 'jadwal' },
           { title: 'Booking', icon: 'mdi-chat-plus', to: 'booking' },
+          { title: 'Member', icon: 'mdi-account-group', to: 'member' },
+          { title: 'Instruktur', icon: 'mdi-chat-plus', to: 'instruktur' },
         ],
     }),
   }

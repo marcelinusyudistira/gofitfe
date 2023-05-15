@@ -1,28 +1,27 @@
 <template>
-  <!-- menampilkan data table berisi array dari prop yaitu bookings -->
+  <!-- menampilkan data table berisi array dari prop yaitu members -->
   <v-data-table
     :headers="headers"
-    :items="bookings"
-    sort-by="calories"
+    :items="members"
     class="elevation-1"
   >
     <template v-slot:top>
       <v-toolbar
         flat
       >
-        <v-toolbar-title><strong>Data Booking</strong></v-toolbar-title>
+        <v-toolbar-title><strong>Data Member</strong></v-toolbar-title>
         <v-divider
           class="mx-4"
           inset
           vertical
         ></v-divider>
         <v-spacer></v-spacer>
-        <!-- dialog yang memunculkan form untuk penambahan data booking -->
+        <!-- dialog yang memunculkan form untuk penambahan data member -->
         <v-dialog
           v-model="dialog"
           max-width="500px"
         >
-        <!-- Tambah data Booking melalui button -->
+        <!-- Tambah data member melalui button -->
           <template v-slot:activator="{ on, attrs }">
             <v-btn
               color="primary"
@@ -48,8 +47,8 @@
                     md="6"
                   >
                     <v-text-field
-                      v-model="editedItem.memberID"
-                      label="Member ID"
+                      v-model="editedItem.nama"
+                      label="Nama"
                     ></v-text-field>
                   </v-col>
                   <v-col
@@ -58,8 +57,8 @@
                     md="6"
                   >
                     <v-text-field
-                      v-model="editedItem.jadwalID"
-                      label="Jadwal ID"
+                      v-model="editedItem.alamat"
+                      label="Alamat"
                     ></v-text-field>
                   </v-col>
                   <v-col
@@ -68,31 +67,10 @@
                     md="6"
                   >
                     <v-text-field
-                      v-model="editedItem.kodePromoID"
-                      label="Kode Promo"
+                      v-model="editedItem.telp"
+                      label="Telpon"
                     ></v-text-field>
                   </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="6"
-                  >
-                    <v-text-field
-                      v-model="editedItem.username"
-                      label="Username"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="6"
-                  >
-                    <v-text-field
-                      v-model="editedItem.sesi"
-                      label="Sesi"
-                    ></v-text-field>
-                  </v-col>
-                  <!-- Menggunakan datapicker dari vuetify untuk mengambil nilai date yang ditentukan user -->
                   <v-col
                     cols="12"
                     sm="6"
@@ -102,15 +80,15 @@
                         ref="menu"
                         v-model="menu"
                         :close-on-content-click="false"
-                        :return-value.sync="editedItem.tanggal"
+                        :return-value.sync="editedItem.tanggalLahir"
                         transition="scale-transition"
                         offset-y
                         min-width="auto"
                     >
                         <template v-slot:activator="{ on, attrs }">
                         <v-text-field
-                            v-model="editedItem.tanggal"
-                            label="Tanggal"
+                            v-model="editedItem.tanggalLahir"
+                            label="Tanggal Lahir"
                             prepend-icon="mdi-calendar"
                             readonly
                             v-bind="attrs"
@@ -118,7 +96,7 @@
                         ></v-text-field>
                         </template>
                         <v-date-picker
-                        v-model="editedItem.tanggal"
+                        v-model="editedItem.tanggalLahir"
                         no-title
                         scrollable
                         >
@@ -140,6 +118,41 @@
                         </v-date-picker>
                     </v-menu>
                   </v-col>
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="6"
+                  >
+                    <v-text-field
+                      v-model="editedItem.expired"
+                      label="Expired"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="6"
+                  >
+                    <v-text-field
+                      v-model="editedItem.deposit"
+                      label="Deposit"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="6"
+                  >
+                    <v-text-field
+                      v-model="editedItem.depositKelas"
+                      label="Deposit Kelas"
+                    ></v-text-field>
+                  </v-col>
+
+                  
+                  <!-- Menggunakan datapicker dari vuetify untuk mengambil nilai date yang ditentukan user -->
+                  
+
                 </v-row>
               </v-container>
             </v-card-text>
@@ -164,10 +177,56 @@
           </v-card>
         </v-dialog>
 
-        <!-- dialog untuk menampilkan form delete -->
-        <v-dialog v-model="dialogDelete" max-width="600px">
+        <v-dialog
+          v-model="dialogGanti"
+          max-width="500px"
+        >
           <v-card>
-            <v-card-title class="text-h5">Anda yakin ingin membatalkan jadwal booking ini?</v-card-title>
+            <v-card-title>
+              <span class="text-h5">Ganti Password</span>
+            </v-card-title>
+
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="6"
+                  >
+                    <v-text-field
+                      v-model="editedItem.password"
+                      label="Password"
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                color="blue darken-1"
+                text
+                @click="close"
+              >
+                Cancel
+              </v-btn>
+              <v-btn
+                color="blue darken-1"
+                text
+                @click="savePassword"
+              >
+                Save
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
+        <!-- dialog untuk menampilkan form delete -->
+        <v-dialog v-model="dialogDelete" max-width="500px">
+          <v-card>
+            <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="blue darken-1" text @click="closeDelete">Cancel</v-btn>
@@ -179,8 +238,10 @@
       </v-toolbar>
     </template>
     <template v-slot:item.actions="{ item }">
-      <!-- Booking kelas tidak bisa diedit karena sifatnya mendeposit kelas --> 
-      <v-btn small color="primary" class="mr-2 mt-1" dark @click="deleteItem(item)">Batalkan Booking</v-btn>
+      <v-btn small color="primary" class="mr-2 mt-1" dark @click="editItemStatus(item)">Ganti Status</v-btn>
+      <v-btn small color="primary" class="mr-2 mt-1" dark @click="editItemPassword(item)">Ganti Password</v-btn>
+      <v-btn small color="primary" class="mr-2 mt-1" dark @click="editItemReset(item)">Reset Password</v-btn>
+      <v-btn small color="primary" class="mr-2 mt-1 mb-1" dark @click="deleteItem(item)">Hapus</v-btn>
       <!-- notifikasi -->
       <v-snackbar
       v-model="snackbar"
@@ -197,38 +258,44 @@
     data: () => ({
       dialog: false,
       dialogDelete: false,
-      dialogInstruktur: false,
+      dialogGanti: false,
       snackbar: false,
       error_message: '',
       value: '',
       headers: [
-        { text: 'Nomor Struk', value: 'noStruk', align: 'start',
+        { text: 'ID Member', value: 'memberID', align: 'start',
           sortable: false },
-        { text: 'Jadwal ID', value: 'jadwalID' },
-        { text: 'Member ID', value: 'memberID' },
-        { text: 'Kode Promo ID', value: 'kodePromoID' },
-        { text: 'Username', value: 'username' },
-        { text: 'Sesi', value: 'sesi' },
-        { text: 'Tanggal', value: 'tanggal' },
-        { text: 'Actions', value: 'actions', sortable: false },
+        { text: 'Nama', value: 'nama' },
+        { text: 'Alamat', value: 'alamat' },
+        //{ text: 'Username', value: 'username' },
+        { text: 'Telpon', value: 'telp' },
+        { text: 'Tanggal Lahir', value: 'tanggalLahir' },
+        { text: 'Status', value: 'statusMember' },
+        { text: 'Deposit', value: 'deposit' },
+        { text: 'Deposit Kelas', value: 'depositKelas' },
+        { text: 'Actions', value: 'actions', width: '10%', sortable: false },
       ],
-      bookings: [],
+      members: [],
       date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
       menu: false,
       editedIndex: -1,
       editedItem: {
-        memberID: '',
-        jadwalID: '',
-        username: '',
-        sesi: '',
-        tanggal: ''
+        nama: '',
+        alamat: '',
+        telp: '',
+        tanggalLahir: '',
+        expired: '',
+        deposit: '',
+        depositKelas: ''
       },
       defaultItem: {
-        memberID: '',
-        jadwalID: '',
-        username: '',
-        sesi: '',
-        tanggal: ''
+        nama: '',
+        alamat: '',
+        telp: '',
+        tanggalLahir: '',
+        expired: '',
+        deposit: '',
+        depositKelas: ''
       },
       tipeFit: [{id:1, name:'kelas'},{id:2, name:'gym'}]
     }),
@@ -253,34 +320,80 @@
     },
 
     methods: {
-      //membaca semua data bookingan dengan konsum API 
+      //membaca semua data member dengan konsum API 
       readData() {
-        var url = this.$api + '/booking_kelas';
+        var url = this.$api + '/member';
         this.$http.get(url, {
             headers: {
                 'Authorization' : 'Bearer ' + localStorage.getItem('token')
             }
         }).then(response => {
-            this.bookings = response.data.data;
+            this.members = response.data.data;
         })
       },
       
-      editItem (item) {
-        this.editedIndex = item.bkID
+      editItemStatus (item) {
+        this.editedIndex = item.memberID
         this.editedItem = Object.assign({}, item)
-        this.dialog = true
+
+        var url = this.$api + '/changeStatus/' + this.editedIndex;
+            this.load = true;
+            
+            this.$http.put(url, this.editedItem, {
+            headers: {
+                'Authorization' : 'Bearer ' + localStorage.getItem('token')
+            }
+            }).then(response => {
+                this.error_message = response.data.message;
+                this.color = "green";
+                this.snackbar = true;
+                this.readData();
+            }).catch(error => {
+                this.error_message = error.response.data.message;
+                this.color = "red";
+            });
+      },
+
+      editItemReset (item) {
+        this.editedIndex = item.memberID
+        this.editedItem = Object.assign({}, item)
+
+        var url = this.$api + '/resetPassword/' + this.editedIndex;
+            this.load = true;
+            
+            this.$http.put(url, this.editedItem, {
+            headers: {
+                'Authorization' : 'Bearer ' + localStorage.getItem('token')
+            }
+            }).then(response => {
+                this.error_message = 'Berhasil mereset data';
+                this.color = "green";
+                this.snackbar = true;
+                this.readData();
+            }).catch(error => {
+                this.error_message = error.response.data.message;
+                this.color = "red";
+            });
+        this.close()
+      },
+
+      editItemPassword (item) {
+        this.editedIndex = item.memberID
+        this.editedItem = Object.assign({}, item)
+        this.editedItem.password = ''
+        this.dialogGanti = true
       },
 
       //menghapus data sesuai ID dan kondisi bahwa cancel booking hanya bisa dilakukan H-1,H-2,dst dengan konsum API
       deleteItem (item) {
-        this.editedIndex = item.bkID
+        this.editedIndex = item.memberID
         this.editedItem = Object.assign({}, item)
         this.dialogDelete = true
       },
 
       //menampilkan dialog untuk menanyakan delete akan dilakukan atau tidak
       deleteItemConfirm () {
-          var url = this.$api + '/booking_kelas/' + this.editedIndex;
+          var url = this.$api + '/member/' + this.editedIndex;
           this.load = true;
           console.log(url)
           this.$http.delete(url, {
@@ -303,7 +416,7 @@
       //menutup form Add
       close () {
         this.dialog = false
-        this.dialogInstruktur = false
+        this.dialogGanti = false
         this.$nextTick(() => {
           this.editedItem = Object.assign({}, this.defaultItem)
           this.editedIndex = -1
@@ -323,11 +436,12 @@
       //Pastikan sudah create member 
       //Pastikan sudah create jadwal
       //No Struk digunakan untuk auto generate yang digunakan untuk Laporan
-      save () {
-        
-            var url = this.$api + '/booking_kelasCoba';
+
+      savePassword (){
+            var url = this.$api + '/changePassword/' + this.editedIndex;
             this.load = true;
-            this.$http.post(url, this.editedItem, {
+            
+            this.$http.put(url, this.editedItem, {
             headers: {
                 'Authorization' : 'Bearer ' + localStorage.getItem('token')
             }
@@ -342,6 +456,8 @@
             });
         this.close()
       },
+
+      save(){}
     },
   }
 </script>
