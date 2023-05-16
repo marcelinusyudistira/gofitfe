@@ -7,7 +7,7 @@
     <v-card-text>
       <div>Selamat Datang</div>
       <p class="text-h4 text--primary">
-        LOGIN Pegawai <br><strong>Go-Fit</strong></br>
+        LOGIN Member <br><strong>Go-Fit</strong>
       </p>
         <v-form v-model="valid">
             <v-container>
@@ -18,7 +18,7 @@
                 <v-text-field
                     label="Username"
                     v-model="username"
-    
+                
                     filled
                     :rules="nameRules"
                     required
@@ -33,7 +33,7 @@
                 <v-text-field
                     label="Password"
                     v-model="password"
-            
+               
                     filled
                     :rules="passwordRules"
                     required
@@ -42,11 +42,10 @@
         
             </v-container>
         </v-form>
-        
     </v-card-text>
     <v-card-actions>
       <p class="text--primary ml-2">
-        Login <a href="/">member</a>
+        Login <a href="/login">pegawai</a>
       </p>
       <v-btn
         color="deep-purple accent-4"
@@ -96,12 +95,12 @@
       submit() {
               //cek validasi data yang terkirim
               this.load = true;
-              this.$http.post(this.$api + '/loginPegawai', {
+              this.$http.post(this.$api + '/login', {
                   username: this.username,
                   password: this.password
               }).then(response => {
                   //simpan data id user yang diinput
-                  localStorage.setItem('roleID', response.data.user.roleID);
+                  localStorage.setItem('memberID', response.data.user.memberID);
                   //localStorage.setItem('email', response.data.user.email);
                   //localStorage.setItem('role', response.data.user.jabatan);
                   localStorage.setItem('token', response.data.access_token);
@@ -111,16 +110,7 @@
                   this.color = "green";
                   this.snackbar = true;
 
-                  //this.$router.push({path: '/admin',});
-                  if(this.cek == 2){
-                      this.$router.push({
-                      path: '/pegawaiAdmin',
-                   });
-                  }else if(this.cek == 1){
-                      this.$router.push({
-                       path: '/instrukturAdmin',
-                   });
-                }
+                  this.$router.push({path: '/memberAdmin',});
 
               }).catch(error => {
                   console.log(error.response)

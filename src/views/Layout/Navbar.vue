@@ -55,7 +55,20 @@
           </v-list-item>
         </v-list-item-group>
       </v-list>
+      <v-btn style="margin-top: 420px; margin-left: 40px;" text @click="dialog=true">Log Out</v-btn>
     </v-navigation-drawer>
+
+    <v-dialog v-model="dialog" max-width="500px">
+        <v-card>
+          <v-card-title class="text-h5">Are you sure you want to logout?</v-card-title>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue darken-1" text @click="dialog=false">Cancel</v-btn>
+            <v-btn color="blue darken-1" text @click="logout()">OK</v-btn>
+            <v-spacer></v-spacer>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
   </v-card>
 </template>
 
@@ -64,14 +77,24 @@
     data: () => ({
       drawer: true,
       group: null,
+      dialog: false,
       items: [
           { title: 'Dashboard', icon: 'mdi-view-dashboard', to: 'dashboard' },
           { title: 'Perizinan', icon: 'mdi-bullhorn-outline', to: 'perizinan' },
-          { title: 'Jadwal', icon: 'mdi-account-group', to: 'jadwal' },
+          { title: 'Jadwal', icon: 'mdi-calendar', to: 'jadwal' },
           { title: 'Booking', icon: 'mdi-chat-plus', to: 'booking' },
           { title: 'Member', icon: 'mdi-account-group', to: 'member' },
-          { title: 'Instruktur', icon: 'mdi-chat-plus', to: 'instruktur' },
+          { title: 'Instruktur', icon: 'mdi-account-group', to: 'instruktur' },
         ],
     }),
+
+    methods: {
+        logout(){
+            this.snackbar = true;
+            this.$router.push({
+                path: '/login',
+            });
+        }
+    }
   }
 </script>

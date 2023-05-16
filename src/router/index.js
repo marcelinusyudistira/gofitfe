@@ -6,11 +6,6 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/',
-    name: 'home',
-    component: HomeView
-  },
-  {
     path: '/about',
     name: 'about',
     // route level code-splitting
@@ -24,8 +19,14 @@ const routes = [
     component: () => import('../views/Login.vue'),
   },
   {
-    path: '/admin',
-    name: 'admin',
+    path: '/',
+    name: 'loginMember',
+    component: () => import('../views/LoginMember.vue'),
+  },
+
+  {
+    path: '/pegawaiAdmin',
+    name: 'pegawaiAdmin',
     component: () => import('../views/Layout/Navbar.vue'),
     children: [
       {
@@ -82,6 +83,84 @@ const routes = [
         // which is lazy-loaded when the route is visited.
         component: () => import(/* webpackChunkName: "about" */ '../views/Admin/Instruktur.vue')
       }
+    ]
+  },
+
+  {
+    path: '/instrukturAdmin',
+    name: 'instrukturAdmin',
+    component: () => import('../views/Layout/NavbarInstruktur.vue'),
+    children: [
+      {
+        path: '/dashboardInstruktur',
+        name: 'dashboardInstruktur',
+        title: 'Go Fit | Dashboard',
+        // route level code-splitting
+        // this generates a separate chunk (about.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: () => import(/* webpackChunkName: "about" */ '../views/Admin/Dashboard.vue')
+      },
+      {
+        path: '/perizinanInstruktur',
+        name: 'perizinanInstruktur',
+        title: 'Go Fit | Perizinan',
+        // route level code-splitting
+        // this generates a separate chunk (about.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: () => import(/* webpackChunkName: "about" */ '../views/Admin/PerizinanInstruktur.vue')
+      },
+      {
+        path: '/jadwalInstruktur',
+        name: 'jadwalInstruktur',
+        title: 'Go Fit | Jadwal',
+        // route level code-splitting
+        // this generates a separate chunk (about.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: () => import(/* webpackChunkName: "about" */ '../views/Admin/JadwalInstruktur.vue')
+      },
+      {
+        path: '/memberInstruktur',
+        name: 'memberInstruktur',
+        title: 'Go Fit | Member',
+        // route level code-splitting
+        // this generates a separate chunk (about.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: () => import(/* webpackChunkName: "about" */ '../views/Admin/MemberInstruktur.vue')
+      },
+    ]
+  },
+  {
+    path: '/memberAdmin',
+    name: 'memberAdmin',
+    component: () => import('../views/Layout/NavbarMember.vue'),
+    children: [
+      {
+        path: '/dashboardMember',
+        name: 'dashboardMember',
+        title: 'Go Fit | Dashboard',
+        // route level code-splitting
+        // this generates a separate chunk (about.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: () => import(/* webpackChunkName: "about" */ '../views/Admin/Dashboard.vue')
+      },
+      {
+        path: '/jadwalMember',
+        name: 'jadwalMember',
+        title: 'Go Fit | Jadwal',
+        // route level code-splitting
+        // this generates a separate chunk (about.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: () => import(/* webpackChunkName: "about" */ '../views/Admin/JadwalMember.vue')
+      },
+      {
+        path: '/bookingMember',
+        name: 'bookingMember',
+        title: 'Go Fit | Booking',
+        // route level code-splitting
+        // this generates a separate chunk (about.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: () => import(/* webpackChunkName: "about" */ '../views/Admin/BookingMember.vue')
+      },
     ]
   }
 ]
